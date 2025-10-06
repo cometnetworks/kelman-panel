@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Clientes Potenciales | Kelman</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: A dedicated dashboard for high-value potential clients. The structure features: 1) A branded header with the Kelman logo. 2) A main grid with visually distinct profile cards for each client. 3) A highly detailed, professionally designed modal that opens on click. The modal is structured into two columns: a left-side for the client's profile summary (image, contact info) and a right-side for in-depth analysis and strategy. This two-column layout is chosen to separate 'who they are' from 'how we should approach them', making the information highly actionable for a sales team. -->
+    <!-- Visualization & Content Choices: 
+        - Client Profile Cards -> Goal: Organize/Identify -> Interactive Cards (HTML/JS) -> Interaction: Click to open detailed modal -> Justification: Provides a clean, uncluttered entry point to the detailed client analysis.
+        - Detailed Client Dossier -> Goal: Inform/Strategize -> Two-Column Modal (HTML/CSS) -> Interaction: None, read-only -> Justification: Presents a comprehensive view including profile picture, contact details, opportunity analysis, and a suggested contact strategy. This format is superior to a simple list as it provides strategic context, making it a true sales intelligence tool.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f7f4;
+        }
+        .modal-body-scroll::-webkit-scrollbar {
+            width: 8px;
+        }
+        .modal-body-scroll::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .modal-body-scroll::-webkit-scrollbar-thumb {
+            background: #c5c5c5;
+            border-radius: 10px;
+        }
+        .modal-body-scroll::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+
+        <header class="mb-8 flex flex-col md:flex-row justify-between items-center">
+            <div>
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-900">Panel de Clientes Potenciales</h1>
+                <p class="text-gray-600 mt-1">Análisis detallado para cierre de ventas de alto valor.</p>
+            </div>
+            <img src="https://res.cloudinary.com/dtlpkbbcp/image/upload/v1759366535/kelman_oj3fyc.png" alt="Logo Kelman" class="h-12 mt-4 md:mt-0">
+        </header>
+
+        <main>
+            <!-- KPI Section -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                 <div class="bg-white p-5 rounded-xl shadow-md flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">Clientes Potenciales Identificados</p>
+                        <p class="text-3xl font-bold text-indigo-600">2</p>
+                    </div>
+                    <div class="bg-indigo-100 text-indigo-600 rounded-full p-3">
+                         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
+                        </svg>
+                    </div>
+                </div>
+                 <div class="bg-white p-5 rounded-xl shadow-md flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">Objetivo</p>
+                        <p class="text-3xl font-bold text-teal-600">Segunda Residencia</p>
+                    </div>
+                    <div class="bg-teal-100 text-teal-600 rounded-full p-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10.496 2.132a1 1 0 00-1.001 0l-7 4.043A1 1 0 002 7.043v7.914a1 1 0 001 1h14a1 1 0 001-1V7.043a1 1 0 00-.495-.868l-7-4.043zM12 9a1 1 0 10-2 0v1a1 1 0 102 0v-1zm-2 3a1 1 0 100 2h4a1 1 0 100-2h-4z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <section id="prospects-grid" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Prospect cards will be injected here -->
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="fixed inset-0 bg-black bg-opacity-70 hidden items-center justify-center p-4 z-50">
+        <div id="modal-content" class="bg-gray-50 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col transform transition-all duration-300 scale-95 opacity-0">
+            <div class="p-6 border-b flex justify-between items-center">
+                 <h2 id="modal-title" class="text-2xl font-bold">Ficha de Cliente Potencial</h2>
+                 <button id="modal-close" class="text-gray-500 hover:text-gray-800 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+            <div id="modal-body" class="p-8 overflow-y-auto modal-body-scroll flex-grow">
+                <!-- Modal content will be injected here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const potentialClientsData = [
+                {
+                    id: 1,
+                    name: 'Blanca Treviño',
+                    title: 'President & CEO',
+                    company: 'Softtek',
+                    companyWeb: 'https://www.softtek.com',
+                    profileImage: 'https://res.cloudinary.com/dtlpkbbcp/image/upload/v1759721696/blanca-trevino_y8wjab.jpg',
+                    email: 'btrevino@softtek.com',
+                    cell: '+52 81 1932 4410',
+                    otherPhone: '+1 813 469 3346',
+                    linkedin: 'https://www.linkedin.com/in/blanca-trevino-27065735/',
+                    note: 'Blanca se encuentra en la actualidad en búsqueda de segunda residencia en el sureste de México: Tulum, Mérida.',
+                    summary: 'Presidenta y CEO de Softtek, una de las empresas de servicios de TI más importantes de América Latina. Reconocida como una de las mujeres más influyentes en el mundo de los negocios, con una visión global y un fuerte interés en la innovación y el desarrollo tecnológico.',
+                    strategy: 'Enfocar la propuesta en desarrollos que ofrezcan exclusividad, alta tecnología (proptech, domótica) y sostenibilidad. Mencionar el creciente ecosistema tecnológico de Mérida como un atractivo adicional. El enfoque debe ser profesional, destacando la plusvalía y la seguridad de la inversión.'
+                },
+                {
+                    id: 2,
+                    name: 'Nader Badii',
+                    title: 'CEO',
+                    company: 'Citrofrut',
+                    companyWeb: 'https://www.citrofrut.com/',
+                    profileImage: 'https://res.cloudinary.com/dtlpkbbcp/image/upload/v1759721700/Nader-Badii_wnphjf.jpg',
+                    email: 'nbadii@citrofrut.com',
+                    cell: '+52 81 4593 1791',
+                    otherPhone: '+52 81 2063 2004',
+                    linkedin: 'https://www.linkedin.com/in/nader-badii-964557129/',
+                    note: 'Actualmente se encuentra en proceso de compra de una segunda residencia en Yucatán.',
+                    summary: 'Director General de Citrofrut, una empresa líder en el sector agroindustrial, enfocada en la producción y procesamiento de cítricos. Perfil de liderazgo con enfoque en la eficiencia operativa y el crecimiento sostenible del negocio a nivel internacional.',
+                    strategy: 'Presentar propiedades que ofrezcan un escape de la vida corporativa: haciendas restauradas, villas con amplios terrenos o residencias en comunidades privadas con amenidades de lujo como campos de golf. El argumento de venta debe centrarse en la calidad de vida, la privacidad y la belleza natural de Yucatán.'
+                }
+            ];
+
+            const prospectsGrid = document.getElementById('prospects-grid');
+            const modal = document.getElementById('modal');
+            const modalContent = document.getElementById('modal-content');
+            const modalClose = document.getElementById('modal-close');
+            const modalBody = document.getElementById('modal-body');
+
+            function renderProspectCard(prospect) {
+                return `
+                    <div class="prospect-card bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 cursor-pointer flex flex-col" data-id="${prospect.id}">
+                        <div class="p-6 flex-grow flex items-center space-x-5">
+                            <img class="h-24 w-24 rounded-full object-cover ring-4 ring-indigo-100" src="${prospect.profileImage}" alt="Perfil de ${prospect.name}">
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-900">${prospect.name}</h3>
+                                <p class="text-md font-semibold text-indigo-700">${prospect.title}</p>
+                                <p class="text-sm text-gray-600">${prospect.company}</p>
+                            </div>
+                        </div>
+                        <div class="bg-gray-50 px-6 py-4">
+                            <p class="text-sm text-gray-700 italic">"${prospect.note}"</p>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            function renderModalContent(prospect) {
+                 return `
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <!-- Left Column: Profile -->
+                        <div class="lg:col-span-1 bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                            <img class="h-32 w-32 rounded-full object-cover mx-auto ring-4 ring-indigo-200" src="${prospect.profileImage}" alt="Perfil de ${prospect.name}">
+                            <div class="text-center mt-4">
+                                <h3 class="text-2xl font-bold text-gray-900">${prospect.name}</h3>
+                                <p class="text-lg font-semibold text-indigo-700">${prospect.title}</p>
+                                <a href="${prospect.companyWeb}" target="_blank" rel="noopener noreferrer" class="text-md text-gray-600 hover:text-indigo-600 transition inline-flex items-center">
+                                    ${prospect.company}
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1.5" viewBox="0 0 20 20" fill="currentColor"><path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" /><path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z" /></svg>
+                                </a>
+                            </div>
+                            <div class="mt-6 pt-6 border-t">
+                                <h4 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">Datos de Contacto</h4>
+                                <ul class="space-y-3 text-sm">
+                                    <li><a href="mailto:${prospect.email}" class="flex items-center text-gray-700 hover:text-orange-600 group"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 text-orange-500 group-hover:text-orange-600" viewBox="0 0 20 20" fill="currentColor"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" /><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" /></svg>${prospect.email}</a></li>
+                                    <li><a href="tel:${prospect.cell.replace(/\s/g, '')}" class="flex items-center text-gray-700 hover:text-orange-600 group"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 text-orange-500 group-hover:text-orange-600" viewBox="0 0 20 20" fill="currentColor"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C6.477 18 2 13.523 2 8V3z" /></svg>${prospect.cell}</a></li>
+                                    <li><a href="tel:${prospect.otherPhone.replace(/\s/g, '')}" class="flex items-center text-gray-700 hover:text-orange-600 group"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 text-orange-500 group-hover:text-orange-600" viewBox="0 0 20 20" fill="currentColor"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C6.477 18 2 13.523 2 8V3z" /></svg>${prospect.otherPhone}</a></li>
+                                    <li><a href="${prospect.linkedin}" target="_blank" rel="noopener noreferrer" class="flex items-center text-gray-700 hover:text-blue-700 group"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 text-blue-600 group-hover:text-blue-700" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>Ver perfil</a></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Analysis -->
+                        <div class="lg:col-span-2 space-y-6">
+                            <div>
+                                <h4 class="text-lg font-bold text-gray-800 mb-2">Resumen del Prospecto</h4>
+                                <p class="text-base text-gray-700 leading-relaxed">${prospect.summary}</p>
+                            </div>
+                             <div class="bg-indigo-50 border-l-4 border-indigo-500 p-4 rounded-r-lg">
+                                <h4 class="text-lg font-bold text-gray-800 mb-2">Análisis de Oportunidad</h4>
+                                <p class="text-base text-gray-700 leading-relaxed">${prospect.note}</p>
+                            </div>
+                            <div class="bg-teal-50 border-l-4 border-teal-500 p-4 rounded-r-lg">
+                                <h4 class="text-lg font-bold text-gray-800 mb-2">Estrategia de Contacto Sugerida</h4>
+                                <p class="text-base text-gray-700 leading-relaxed">${prospect.strategy}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            function renderAllCards() {
+                prospectsGrid.innerHTML = '';
+                potentialClientsData.forEach(prospect => {
+                    prospectsGrid.innerHTML += renderProspectCard(prospect);
+                });
+
+                document.querySelectorAll('.prospect-card').forEach(card => {
+                    card.addEventListener('click', (e) => {
+                        const prospectId = parseInt(e.currentTarget.dataset.id);
+                        const prospect = potentialClientsData.find(p => p.id === prospectId);
+                        if (prospect) {
+                            modalBody.innerHTML = renderModalContent(prospect);
+                            modal.classList.remove('hidden');
+                            modal.classList.add('flex');
+                            setTimeout(() => {
+                                modalContent.classList.remove('scale-95', 'opacity-0');
+                                modalContent.classList.add('scale-100', 'opacity-100');
+                            }, 10);
+                        }
+                    });
+                });
+            }
+
+            modalClose.addEventListener('click', () => {
+                modalContent.classList.remove('scale-100', 'opacity-100');
+                modalContent.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                }, 300);
+            });
+
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modalClose.click();
+                }
+            });
+
+            renderAllCards();
+        });
+    </script>
+
+</body>
+</html>
+
+
+
+
+
